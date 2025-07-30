@@ -1,13 +1,19 @@
 from flask import Flask, render_template, request
 import pickle
 import numpy as np
+import os  # <-- Add this import
 
 app = Flask(__name__)
 
-# Load model
-model = pickle.load(open('rf_classifier.pkl', 'rb'))
+# Construct the absolute path to the model files
+# This makes sure your app can find the files when deployed on Vercel
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+model_path = os.path.join(base_dir, 'rf_classifier.pkl')
+scaler_path = os.path.join(base_dir, 'scaler.pkl')
 
-scaler = pickle.load(open('scaler.pkl', 'rb'))
+# Load model and scaler using the new paths
+model = pickle.load(open(model_path, 'rb'))
+scaler = pickle.load(open(scaler_path, 'rb'))
 
 # Prediction function
 def predict(model, scaler, male, age, currentSmoker, cigsPerDay, BPMeds, prevalentStroke, prevalentHyp, diabetes,
